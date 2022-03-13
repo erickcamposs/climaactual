@@ -46,6 +46,8 @@ function consultarAPI(ciudad, pais){
     fetch(url)
         .then(resolve => resolve.json())
         .then(datos => {
+            console.log(datos);
+            limpiarHTML();
             if(datos.cod === '404'){
                 imprimirAlerta('Ciudad no encontrada', 'error');
                 return;
@@ -55,18 +57,39 @@ function consultarAPI(ciudad, pais){
 }
 
 function mostrarClima(clima){
-    const {main: {temp, temp_max, temp_min} } = clima;
-    const temperatura = kelvinaCentrigrados(temp);
+    const {name,main: {temp, temp_max, temp_min, humidity}, sys: {country} } = clima;
 
-    limpiarHTML();
+    const temperatura = kelvinaCentrigrados(temp);
+    const max = kelvinaCentrigrados(temp_max);
+    const min = kelvinaCentrigrados(temp_min);
+
+    const nombre = document.createElement('P');
+    nombre.textContent = `${name}, ${country}`;
+    nombre.classList.add('text-3xl', 'text-center');
 
     const resultadoTemp = document.createElement('P');
     resultadoTemp.innerHTML = `${temperatura} &#8451;`
     resultadoTemp.classList.add('font-bold', 'text-6xl');
 
+    const maxTemp = document.createElement('P');
+    maxTemp.innerHTML = `Max: ${max} &#8451;`
+    maxTemp.classList.add('text-xl');
+
+    const minTemp = document.createElement('P');
+    minTemp.innerHTML = `Min: ${min} &#8451;`
+    minTemp.classList.add('text-xl');
+
+    const humedad = document.createElement('P');
+    humedad.innerHTML = `Humedad: ${humidity}%;`
+    humedad.classList.add('text-xl');
+
     const resultadoDiv = document.createElement('DIV');
     resultadoDiv.classList.add('text-center', 'text-white');
+    resultadoDiv.appendChild(nombre);
     resultadoDiv.appendChild(resultadoTemp);
+    resultadoDiv.appendChild(maxTemp);
+    resultadoDiv.appendChild(minTemp);
+    resultadoDiv.appendChild(humedad);
 
     resultado.appendChild(resultadoDiv);
 }
